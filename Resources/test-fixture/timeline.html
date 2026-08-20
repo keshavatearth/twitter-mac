@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+  Offline stand-in for an x.com timeline, used to exercise the real injection path
+  without a login:  TwitterMac shot <this file> out.png
+  The markup copies the attributes the filters key off — article[data-testid="tweet"],
+  [data-testid="cellInnerDiv"], [data-testid="tweetText"], a[href*="/status/"],
+  [data-testid="placementTracking"], [data-testid="sidebarColumn"] — and nothing else.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>TwitterMac filter fixture</title>
+<style>
+  :root { color-scheme: dark; }
+  body {
+    margin: 0; background: #000; color: #e7e9ea;
+    font: 15px/1.4 -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    display: flex; justify-content: center;
+  }
+  .layout { display: flex; gap: 24px; width: 1000px; }
+  [data-testid="primaryColumn"] { width: 600px; border-inline: 1px solid #2f3336; }
+  header {
+    padding: 14px 16px; font-weight: 700; font-size: 17px;
+    border-bottom: 1px solid #2f3336; position: sticky; top: 0; background: rgba(0,0,0,.85);
+  }
+  [role="tablist"] { display: flex; border-bottom: 1px solid #2f3336; }
+  [role="presentation"] { flex: 1; }
+  [role="tab"] {
+    display: block; text-align: center; padding: 14px 0; color: #71767b;
+    text-decoration: none; font-weight: 600;
+  }
+  [role="tab"][aria-selected="true"] { color: #e7e9ea; box-shadow: inset 0 -3px 0 #1d9bf0; }
+  [data-testid="cellInnerDiv"] { border-bottom: 1px solid #2f3336; }
+  article { display: flex; gap: 12px; padding: 12px 16px; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; background: #333639; flex: 0 0 auto; }
+  .who { display: flex; gap: 6px; align-items: baseline; }
+  .name { font-weight: 700; }
+  .handle, .ago, .ad { color: #71767b; font-size: 14px; }
+  [data-testid="tweetText"] { margin: 2px 0 8px; }
+  .actions { display: flex; gap: 42px; color: #71767b; font-size: 13px; }
+  [data-testid="sidebarColumn"] { width: 350px; padding-top: 12px; }
+  .panel { background: #16181c; border-radius: 16px; padding: 12px 16px; margin-bottom: 16px; }
+  .panel h2 { font-size: 19px; margin: 0 0 10px; }
+  .trend { padding: 8px 0; color: #71767b; font-size: 13px; }
+  .trend b { display: block; color: #e7e9ea; font-size: 15px; }
+</style>
+</head>
+<body>
+<div class="layout">
+  <div data-testid="primaryColumn">
+    <header>Home</header>
+    <div role="tablist">
+      <div role="presentation"><a role="tab" aria-selected="true" href="#foryou">For you</a></div>
+      <div role="presentation"><a role="tab" aria-selected="false" href="#following">Following</a></div>
+    </div>
+    <div id="feed"></div>
+  </div>
+
+  <div data-testid="sidebarColumn">
+    <div class="panel">
+      <h2>What&rsquo;s happening</h2>
+      <div class="trend"><b>#SomeHashtag</b>128K posts</div>
+      <div class="trend"><b>Politics &middot; Trending</b>44.2K posts</div>
+      <div class="trend"><b>Another Trend</b>9,812 posts</div>
+    </div>
+    <div class="panel">
+      <h2>Who to follow</h2>
+      <div class="trend"><b>Some Account</b>@someaccount</div>
+      <div class="trend"><b>Another Account</b>@another</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // id, display name, handle, text, promoted?
+  var POSTS = [
+    [1001, 'Ana Dev', 'anadev',
+     'Shipped a Swift package for on-device transcription today. 40x realtime on an M2.', false],
+    [1002, 'Beltway Daily', 'beltwaydaily',
+     'Trump just announced new tariffs on Chinese imports ahead of the midterms.', false],
+    [1003, 'Growth Guy', 'growthguy',
+     'Give me ONE good reason to buy a Windows laptop apart from Gaming', false],
+    [1004, 'Some Brand', 'somebrand',
+     'Our new CRM makes your team 10x faster. Start a free trial today.', true],
+    [1005, 'Compiler Notes', 'compilernotes',
+     'New paper: a benchmark for long-context retrieval, with a reproducible harness.', false],
+    [1006, 'Feed Filler', 'feedfiller',
+     'Mornings like this in Namma Bengaluru 🫰🏼', false],
+    [1007, 'World Desk', 'worlddesk',
+     'Gaza ceasefire talks collapsed again overnight, officials say.', false],
+    [1008, 'Kate Builds', 'katebuilds',
+     'We used a conservative estimate for the p99 latency budget and still came in under.', false]
+  ];
+
+  function cell(id, name, handle, text, promoted) {
+    var wrap = document.createElement('div');
+    wrap.setAttribute('data-testid', 'cellInnerDiv');
+    wrap.innerHTML =
+      '<article data-testid="tweet">' +
+        '<div class="avatar"></div>' +
+        '<div style="flex:1">' +
+          '<div class="who">' +
+            '<span class="name">' + name + '</span>' +
+            '<span class="handle">@' + handle + '</span>' +
+            '<span class="ago">&middot; 2h</span>' +
+            (promoted ? '<span class="ad" data-testid="placementTracking">Ad</span>' : '') +
+          '</div>' +
+          '<div data-testid="tweetText">' + text + '</div>' +
+          '<div class="actions"><span>12</span><span>34</span><span>560</span><span>7.8K</span></div>' +
+          '<a href="/' + handle + '/status/' + id + '" style="display:none">link</a>' +
+        '</div>' +
+      '</article>';
+    return wrap;
+  }
+
+  var feed = document.getElementById('feed');
+  POSTS.slice(0, 6).forEach(function (p) { feed.appendChild(cell(p[0], p[1], p[2], p[3], p[4])); });
+
+  // Appended late on purpose: proves the MutationObserver catches posts that arrive
+  // after documentEnd, which is how the real infinite scroll behaves.
+  setTimeout(function () {
+    POSTS.slice(6).forEach(function (p) { feed.appendChild(cell(p[0], p[1], p[2], p[3], p[4])); });
+  }, 900);
+</script>
+</body>
+</html>

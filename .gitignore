@@ -1,0 +1,7 @@
+.build/
+build/
+AppIcon.iconset/
+Resources/AppIcon.icns
+*.xcodeproj/
+DerivedData/
+Package.resolved

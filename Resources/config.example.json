@@ -1,0 +1,6 @@
+{
+  "_comment": "Copy to ~/.config/twitter-mac/config.json. TwitterMac also creates that file with an empty key on first launch. Nothing here is ever bundled into the .app.",
+  "GEMINI_API_KEY": "",
+  "GEMINI_MODEL": "gemini-2.5-flash",
+  "USER_AGENT": ""
+}
