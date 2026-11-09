@@ -1,5 +1,11 @@
 # TwitterMac
 
+> **Retired, November 2026.** Kept as a record and not maintained. The files date
+> from 20 August 2026. The folder was never under Git, so the first commit here is an
+> import dated to that day. `REPORT.md` has the code-signing identity and team ID
+> removed. The filters were ported from
+> [twitter-politics-filter](https://github.com/keshavatearth/twitter-politics-filter).
+
 A native macOS client for Twitter/X: a WKWebView shell around x.com with content
 filters injected, plus native Mac ergonomics. Built with SwiftPM + SwiftUI, no
 Xcode project, no full Xcode required.
